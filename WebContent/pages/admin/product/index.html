@@ -14,30 +14,22 @@
 			</tr>
 			<tr>
 				<th>Marca</th>
-				<td>
-					<select name="marcaId" id="selMarca">
+				<td><select name="marcaId" id="selMarca">
 						<option value="" class="buscando">Aguarde, buscando
 							marcas...</option>
-				</select>
-				</td>
+				</select></td>
 			</tr>
 			<tr>
 				<th>Modelo</th>
-				<td>
-					<input type="text" name="modelo">
-				</td>
+				<td><input type="text" name="modelo"></td>
 			</tr>
 			<tr>
 				<th>Capacidade(1)</th>
-				<td>
-					<input type="text" name="capacidade">
-				</td>
+				<td><input type="text" name="capacidade"></td>
 			</tr>
 			<tr>
 				<th>Valor (R$)</th>
-				<td>
-					<input type="text" name="valor">
-				</td>
+				<td><input type="text" name="valor"></td>
 			</tr>
 			<tr>
 				<td colspan="2">
@@ -48,3 +40,13 @@
 		</table>
 	</fieldset>
 </form>
+<h3>Produtos registrados</h3>
+<form id="filtraProduto" class="frmFiltrar">
+	<fieldset>
+		<legend>Filtrar</legend>
+		<input type="text" name="txtbusca" id="campoBuscaProduto"
+			placeholder="Pesquise pelo modelo">
+		<button type="button">Buscar</button>
+	</fieldset>
+</form>
+<div id="listaProdutos" class="listaRegistros"></div>
