@@ -2,7 +2,7 @@
 COLDIGO = new Object();
 
 $(document).ready(function() {
-	
+
 	//Cria uma constante com o valor da URI raiz do REST
 	COLDIGO.PATH = "/ProjetoTrilhaWeb/rest/";
 
@@ -27,8 +27,13 @@ $(document).ready(function() {
 		});
 	}
 
+	//Exibe os valores financeiros no formato da moeda Real
+	COLDIGO.formatarDinheiro = function(valor) {
+		return valor.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+\,)/g, "$1.");
+	}
+
 	//Define as configurações base de uma modal de aviso
-COLDIGO.exibirAviso = function(aviso) {
+	COLDIGO.exibirAviso = function(aviso) {
 		var modal = {
 			title: "Mensagem",
 			height: 250,

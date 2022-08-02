@@ -15,11 +15,10 @@ import br.com.coldigogeladeiras.modelo.Marca;
 @Path("marca")
 public class MarcaRest extends UtilRest {
 
-	@GET
-	@Path("/buscar")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response buscar() {
-
+@GET
+@Path("/buscar")
+@Produces(MediaType.APPLICATION_JSON)
+public Response buscar() {
 		try {
 			List<Marca> listaMarcas = new ArrayList<Marca>();
 
