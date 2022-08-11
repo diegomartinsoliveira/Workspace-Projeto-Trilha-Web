@@ -100,7 +100,7 @@ footer {
 }
 
 /*****   Modais *****/
-#modalAviso {
+#modalAviso, .modalEditar {
 	display: none;
 }
 
