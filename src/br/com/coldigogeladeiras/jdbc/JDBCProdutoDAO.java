@@ -123,10 +123,10 @@ public class JDBCProdutoDAO implements ProdutoDAO {
 	}
 
 	public Produto buscarPorId(int id) {
-		
+
 		String comando = "SELECT * FROM produtos WHERE produtos.id = ?";
 		Produto produto = new Produto();
-		
+
 		try {
 			PreparedStatement p = this.conexao.prepareStatement(comando);
 			p.setInt(1, id);
@@ -146,11 +146,34 @@ public class JDBCProdutoDAO implements ProdutoDAO {
 				produto.setCapacidade(capacidade);
 				produto.setValor(valor);
 
-			}	
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return produto;
+	}
+
+	public boolean alterar(Produto produto) {
+
+		String comando = "UPDATE produtos " + "SET categoria=?, modelo=?, capacidade=?, valor=?, marcas_id=?"
+				+ " WHERE id=?";
+		PreparedStatement p;
+
+		try {
+			p = this.conexao.prepareStatement(comando);
+			p.setString(1, produto.getCategoria());
+			p.setString(2, produto.getModelo());
+			p.setInt(3, produto.getCapacidade());
+			p.setFloat(4, produto.getValor());
+			p.setInt(5, produto.getMarcaId());
+			p.setInt(6, produto.getId());
+			p.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+
 	}
 
 }
