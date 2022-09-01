@@ -157,13 +157,13 @@ public class ProdutoRest extends UtilRest {
 			
 			String msg = "";
 			if (retorno) {
-				msg = "Produto excluído com sucesso!";
+				msg = "Produto alterado com sucesso!";
 			} else {
-				msg = "Erro ao excluir produto.";
+				msg = "Erro ao alterar produto.";
 			}
 
 			conec.fecharConexao();
-			return this.buildResponse(produto);
+			return this.buildResponse(msg);
 
 		} catch (Exception e) {
 			e.printStackTrace();

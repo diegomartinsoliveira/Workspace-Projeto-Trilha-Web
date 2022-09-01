@@ -121,7 +121,7 @@ $(document).ready(function() {
 				$("#listaProdutos").html(COLDIGO.produto.exibir(dados));
 			},
 			error: function(info) {
-				COLDIGO.exibirAviso("Erro ao consultar os contatos: " + info.status + " - " + info.statusText);
+				COLDIGO.exibirAviso("Erro ao consultar os dados: " + info.status + " - " + info.statusText);
 			}
 		});
 
@@ -254,6 +254,8 @@ $(document).ready(function() {
 			url: COLDIGO.PATH + "produto/alterar",
 			data: JSON.stringify(produto),
 			success: function(msg) {
+			msg = JSON.parse(msg);
+
 				COLDIGO.exibirAviso(msg);
 				COLDIGO.produto.buscar();
 				$("#modalEditaProduto").dialog("close");
