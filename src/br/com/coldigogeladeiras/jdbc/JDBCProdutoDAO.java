@@ -145,6 +145,7 @@ public class JDBCProdutoDAO implements ProdutoDAO {
 				produto.setModelo(modelo);
 				produto.setCapacidade(capacidade);
 				produto.setValor(valor);
+				
 
 			}
 		} catch (Exception e) {
@@ -174,6 +175,30 @@ public class JDBCProdutoDAO implements ProdutoDAO {
 		}
 		return true;
 
+	}
+	
+	public List<Produto> produtosVinculados(int id) {
+
+		String comando = "SELECT * FROM produtos WHERE marcas_id = ?";
+		List<Produto> listaProdutos = new ArrayList<Produto>();
+		Produto produto = new Produto();
+
+		try {
+			PreparedStatement p = this.conexao.prepareStatement(comando);
+			p.setInt(1, id);
+			ResultSet rs = p.executeQuery();
+			while (rs.next()) {
+
+		
+				int marcaId = rs.getInt("marcas_id");				
+				produto.setMarcaId(marcaId);							
+				listaProdutos.add(produto);
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listaProdutos;
 	}
 
 }

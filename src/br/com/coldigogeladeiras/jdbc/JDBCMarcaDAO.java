@@ -20,7 +20,7 @@ public class JDBCMarcaDAO implements MarcaDAO {
 
 	public boolean inserir(Marca marca) {
 
-		String comando = "INSERT INTO marcas" + "(id, nome) " + "VALUES (?,?)";
+		String comando = "INSERT INTO marcas (id, nome) VALUES (?,?)";
 		PreparedStatement p;
 
 		try {

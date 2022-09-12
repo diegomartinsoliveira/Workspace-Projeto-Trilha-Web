@@ -17,7 +17,9 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 import br.com.coldigogeladeiras.bd.Conexao;
 import br.com.coldigogeladeiras.jdbc.JDBCMarcaDAO;
+import br.com.coldigogeladeiras.jdbc.JDBCProdutoDAO;
 import br.com.coldigogeladeiras.modelo.Marca;
+import br.com.coldigogeladeiras.modelo.Produto;
 
 @Path("marca")
 public class MarcaRest extends UtilRest {
@@ -108,31 +110,54 @@ public class MarcaRest extends UtilRest {
 	public Response excluir(@PathParam("id") int id) {
 
 		try {
-
+			
+			String msg = "";
 			Conexao conec = new Conexao();
 			Connection conexao = conec.abrirConexao();
 			JDBCMarcaDAO jdbcMarca = new JDBCMarcaDAO(conexao);
+			JDBCProdutoDAO jdbcProduto = new JDBCProdutoDAO(conexao);
+	
+			Marca marca = jdbcMarca.buscarPorId(id);
 
-			boolean retorno = jdbcMarca.deletar(id);
-
-			String msg = "";
-			if (retorno) {
-				msg = "Marca excluída com sucesso!";
+			if (marca.getId() != id) {
+	
+				msg = "Essa marca já foi excluida";
+	
 			} else {
-				msg = "Erro ao excluir marca.";
+				List<Produto> listaProdutos = jdbcProduto.produtosVinculados(id);
+				
+				if (!listaProdutos.isEmpty()) {
+	
+					msg = "Existe produto vinculado a essa marca, não será possível excluir";
+					
+				} else {
+	
+					boolean retorno = jdbcMarca.deletar(id);
+	
+					if (retorno) {
+	
+						msg = "Marca excluída com sucesso!";
+	
+					} else {
+	
+						msg = "Erro ao excluir marca!";
+					}
+	
+				}
 			}
-
+	
 			conec.fecharConexao();
-
 			return this.buildResponse(msg);
-
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());
 		}
 
+
 	}
-	
+
 	@GET
 	@Path("/buscarPorId")
 	@Consumes("application/*")
@@ -161,7 +186,7 @@ public class MarcaRest extends UtilRest {
 	@Path("/alterar")
 	@Consumes("application/*")
 	public Response alterar(String marcaParam) {
-		
+
 		try {
 			Marca marca = new Gson().fromJson(marcaParam, Marca.class);
 			Conexao conec = new Conexao();
@@ -169,7 +194,7 @@ public class MarcaRest extends UtilRest {
 			JDBCMarcaDAO jdbcMarca = new JDBCMarcaDAO(conexao);
 
 			boolean retorno = jdbcMarca.alterar(marca);
-			
+
 			String msg = "";
 			if (retorno) {
 				msg = "Marca alterada com sucesso!";

@@ -8,7 +8,7 @@ $(document).ready(function() {
 		var marca = new Object();
 		marca.nome = document.frmAddMarca.nome.value;
 
-		if (marca.nomeMarca == "") {
+		if (marca.nome == "") {
 			COLDIGO.exibirAviso("Preencha todos os campos!");
 
 		} else {
@@ -78,7 +78,7 @@ $(document).ready(function() {
 			}
 
 		} else if (listaMarcas == "") {
-			tabela += "<tr><td colspan='6'> Nenhum registro encontrado </td></tr>";
+			tabela += "<tr><td colspan='3'> Nenhum registro encontrado </td></tr>";
 		}
 		tabela += "</table>";
 

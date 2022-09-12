@@ -20,7 +20,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import br.com.coldigogeladeiras.bd.Conexao;
+import br.com.coldigogeladeiras.jdbc.JDBCMarcaDAO;
 import br.com.coldigogeladeiras.jdbc.JDBCProdutoDAO;
+import br.com.coldigogeladeiras.modelo.Marca;
 import br.com.coldigogeladeiras.modelo.Produto;
 
 @Path("produto")
@@ -30,24 +32,32 @@ public class ProdutoRest extends UtilRest {
 	@Path("/inserir")
 	@Consumes("application/*")
 	public Response inserir(String produtoParam) {
+		
 
 		try {
 
+			String msg = "";
 			Produto produto = new Gson().fromJson(produtoParam, Produto.class);
-
 			Conexao conec = new Conexao();
 			Connection conexao = conec.abrirConexao();
-
 			JDBCProdutoDAO jdbcProduto = new JDBCProdutoDAO(conexao);
+			JDBCMarcaDAO jdbcMarca = new JDBCMarcaDAO(conexao);
 
-			boolean retorno = jdbcProduto.inserir(produto);
+			Marca marca = jdbcMarca.buscarPorId(produto.getMarcaId());
 
-			String msg = "";
+			if (marca.getId() != produto.getMarcaId()) {
 
-			if (retorno) {
-				msg = "Produto cadastrado com sucesso!";
+				msg = "Essa marca não existe mais, atualize a página";
+
 			} else {
-				msg = "Erro ao cadastrar produto";
+
+				boolean retorno = jdbcProduto.inserir(produto);
+
+				if (retorno) {
+					msg = "Produto cadastrado com sucesso!";
+				} else {
+					msg = "Erro ao cadastrar produto";
+				}
 			}
 
 			conec.fecharConexao();
@@ -58,7 +68,6 @@ public class ProdutoRest extends UtilRest {
 			e.printStackTrace();
 			return this.buildErrorResponse(e.getMessage());
 		}
-
 	}
 
 	@GET
@@ -154,7 +163,7 @@ public class ProdutoRest extends UtilRest {
 			JDBCProdutoDAO jdbcProduto = new JDBCProdutoDAO(conexao);
 
 			boolean retorno = jdbcProduto.alterar(produto);
-			
+
 			String msg = "";
 			if (retorno) {
 				msg = "Produto alterado com sucesso!";
