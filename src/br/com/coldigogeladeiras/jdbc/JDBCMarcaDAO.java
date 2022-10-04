@@ -45,7 +45,7 @@ public class JDBCMarcaDAO implements MarcaDAO {
 	public List<Marca> buscar() {
 
 		// Criação da instrução SQL para busca de todas as marcas
-		String comando = "SELECT * FROM marcas";
+		String comando = "SELECT * FROM marcas WHERE status=1 ORDER BY nome ASC";
 
 		// Criação de uma lista para armazenar cada marca encontrada
 		List<Marca> listMarcas = new ArrayList<Marca>();
@@ -72,10 +72,12 @@ public class JDBCMarcaDAO implements MarcaDAO {
 				// Recebimento dos 2 dados retornados do BD para cada linha encontrada
 				int id = rs.getInt("id");
 				String nome = rs.getString("nome");
+				int status = rs.getInt("status");
 
 				// Setando no objeto marca os valores encontrados
 				marca.setId(id);
 				marca.setNome(nome);
+				marca.setStatus(status);
 
 				// Adição da instância contida no objeto Marca na lista de marcas
 				listMarcas.add(marca);
@@ -121,10 +123,12 @@ public class JDBCMarcaDAO implements MarcaDAO {
 				// Recebimento dos 2 dados retornados do BD para cada linha encontrada
 				int id = rs.getInt("id");
 				String nomeMarca = rs.getString("nome");
+				int status = rs.getInt("status");
 
 				// Setando no objeto marca os valores encontrados
 				marca.setId(id);
 				marca.setNome(nomeMarca);
+				marca.setStatus(status);
 
 				// Adição da instância contida no objeto Marca na lista de marcas
 				listaMarcas.add(marca);
@@ -136,7 +140,7 @@ public class JDBCMarcaDAO implements MarcaDAO {
 
 		return listaMarcas;
 	}
-	
+
 	public boolean deletar(int id) {
 		String comando = "DELETE FROM marcas WHERE id = ?";
 		PreparedStatement p;
@@ -150,7 +154,7 @@ public class JDBCMarcaDAO implements MarcaDAO {
 		}
 		return true;
 	}
-	
+
 	public Marca buscarPorId(int id) {
 
 		String comando = "SELECT * FROM marcas WHERE marcas.id = ?";
@@ -163,9 +167,11 @@ public class JDBCMarcaDAO implements MarcaDAO {
 			while (rs.next()) {
 
 				String nome = rs.getString("nome");
-				
+				int status = rs.getInt("status");
+
 				marca.setId(id);
 				marca.setNome(nome);
+				marca.setStatus(status);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -188,6 +194,85 @@ public class JDBCMarcaDAO implements MarcaDAO {
 			return false;
 		}
 		return true;
+
+	}
+
+	@Override
+	public boolean verificaStatus(int id) {
+
+		String comando = "SELECT marcas.status FROM marcas WHERE id=?";
+		PreparedStatement p;
+		int status = 0;
+
+		try {
+
+			p = this.conexao.prepareStatement(comando);
+			p.setInt(1, id);
+			ResultSet rs = p.executeQuery();
+
+			if (rs.next()) {
+				status = rs.getInt("status");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		if (status == 1) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public boolean updateStatus(int status, int id) {
+
+		String comando = "UPDATE marcas SET status=? WHERE id=?";
+		PreparedStatement p;
+
+		try {
+
+			p = this.conexao.prepareStatement(comando);
+			p.setInt(1, status);
+			p.setInt(2, id);
+
+			p.executeUpdate();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+
+	}
+	
+	public boolean verificaMarcaDuplicada(Marca marca) {
+		
+		String comando = "SELECT marcas.nome FROM marcas";
+		PreparedStatement p;
+		
+		try {
+			
+			p = this.conexao.prepareStatement(comando);
+			ResultSet rs = p.executeQuery();
+			
+			while(rs.next()) {
+				
+				if(rs.getString("nome").equalsIgnoreCase(marca.getNome())) {
+					return false;
+				}
+				
+			}
+			
+			return true;
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 
 	}
 

@@ -200,5 +200,33 @@ public class JDBCProdutoDAO implements ProdutoDAO {
 		}
 		return listaProdutos;
 	}
+	
+	public boolean verificaProdutoDuplicado(Produto produto) {
+		
+		String comando = "SELECT * FROM produtos";
+		PreparedStatement p;
+		
+		try {
+			
+			p = this.conexao.prepareStatement(comando);
+			ResultSet rs = p.executeQuery();
+			
+			while(rs.next()) {
+				
+				if(rs.getString("modelo").equalsIgnoreCase(produto.getModelo()) && rs.getInt("marcas_id") == produto.getMarcaId()) {
+					return false;
+				}
+				
+			}
+			
+			return true;
+			
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		
+	}
 
 }

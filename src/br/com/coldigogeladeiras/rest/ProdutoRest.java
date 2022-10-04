@@ -32,7 +32,6 @@ public class ProdutoRest extends UtilRest {
 	@Path("/inserir")
 	@Consumes("application/*")
 	public Response inserir(String produtoParam) {
-		
 
 		try {
 
@@ -42,25 +41,35 @@ public class ProdutoRest extends UtilRest {
 			Connection conexao = conec.abrirConexao();
 			JDBCProdutoDAO jdbcProduto = new JDBCProdutoDAO(conexao);
 			JDBCMarcaDAO jdbcMarca = new JDBCMarcaDAO(conexao);
+			boolean retornoProdutoDuplicado = jdbcProduto.verificaProdutoDuplicado(produto);
 
-			Marca marca = jdbcMarca.buscarPorId(produto.getMarcaId());
+			if (retornoProdutoDuplicado) {
 
-			if (marca.getId() != produto.getMarcaId()) {
+				Marca marca = jdbcMarca.buscarPorId(produto.getMarcaId());
 
-				msg = "Essa marca não existe mais, atualize a página";
+				if (marca.getId() != produto.getMarcaId()) {
 
+					return this.buildErrorResponse("Essa marca não existe mais, atualize a página");
+
+				} else {
+
+					boolean retorno = jdbcProduto.inserir(produto);
+					conec.fecharConexao();
+
+					if (retorno) {
+
+						msg = "Produto cadastrado com sucesso!";
+
+					} else {
+
+						return this.buildErrorResponse("Erro ao cadastrar produto");
+					}
+				}
 			} else {
 
-				boolean retorno = jdbcProduto.inserir(produto);
+				return this.buildErrorResponse("Este produto já está cadastrado!");
 
-				if (retorno) {
-					msg = "Produto cadastrado com sucesso!";
-				} else {
-					msg = "Erro ao cadastrar produto";
-				}
 			}
-
-			conec.fecharConexao();
 
 			return this.buildResponse(msg);
 
@@ -108,15 +117,17 @@ public class ProdutoRest extends UtilRest {
 			JDBCProdutoDAO jdbcProduto = new JDBCProdutoDAO(conexao);
 
 			boolean retorno = jdbcProduto.deletar(id);
-
-			String msg = "";
-			if (retorno) {
-				msg = "Produto excluído com sucesso!";
-			} else {
-				msg = "Erro ao excluir produto.";
-			}
-
 			conec.fecharConexao();
+			String msg = "";
+
+			if (retorno) {
+
+				msg = "Produto excluído com sucesso!";
+
+			} else {
+
+				return this.buildErrorResponse("Erro ao excluir produto.");
+			}
 
 			return this.buildResponse(msg);
 
@@ -165,13 +176,16 @@ public class ProdutoRest extends UtilRest {
 			boolean retorno = jdbcProduto.alterar(produto);
 
 			String msg = "";
+			conec.fecharConexao();
 			if (retorno) {
+
 				msg = "Produto alterado com sucesso!";
+
 			} else {
-				msg = "Erro ao alterar produto.";
+
+				return this.buildErrorResponse("Erro ao alterar produto.");
 			}
 
-			conec.fecharConexao();
 			return this.buildResponse(msg);
 
 		} catch (Exception e) {

@@ -21,7 +21,7 @@ public class UtilRest {
 	public Response buildErrorResponse(String str) {
 		// Abaixo o objeto rb recebe o status do erro
 		ResponseBuilder rb = Response.status(Response.Status.INTERNAL_SERVER_ERROR);
-		// Define a entidade (objeto), que nesse caso � uma mensagem que ser� retornado
+		// Define a entidade (objeto), que nesse caso  uma mensagem que será retornado
 		// para o cliente
 		rb = rb.entity(str);
 		// Define o tipo de retorno do objeto, no caso definido como texto simples.
